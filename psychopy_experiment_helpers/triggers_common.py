@@ -49,6 +49,6 @@ class TriggerHandler:
 
     def close_trial(self, value):
         for trig in self.trial:
-            trig = trig.format(value)
+            trig = trig + str(value)
             self.data_saver.triggers_list.append(trig)
         self.trial = None

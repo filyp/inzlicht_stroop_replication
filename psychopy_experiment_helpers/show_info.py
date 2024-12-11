@@ -1,10 +1,4 @@
-# TODO this file could be made more general, or even moved to individual task code
-
-
-import os
-import codecs
-
-from psychopy import event, logging, visual, core
+from psychopy import core, event, logging, visual
 
 
 def show_info(
@@ -14,17 +8,6 @@ def show_info(
     pos=(0, 0),
     duration=None,
 ):
-    """
-    Clear way to show info message into screen.
-    :param win:
-    :param file_name:
-    :param screen_width:
-    :param text_size:
-    :param text_color:
-    :param insert: extra text for read_text_from_file
-    :return:
-    """
-
     screen_width = exp.screen_res["width"]
 
     hello_msg = custom_text
@@ -42,7 +25,6 @@ def show_info(
     hello_msg.draw()
     exp.win.flip()
     if duration is None:
-        
         # wait for key press or mouse click
         event.clearEvents()
         exp.mouse.clickReset()
@@ -57,9 +39,8 @@ def show_info(
                 exit(1)
             if "space" in keys:
                 break
-                
+
             core.wait(0.030)
-            
 
     else:
         # wait for duration

@@ -14,6 +14,13 @@ from stroop_task.triggers import TriggerTypes, get_trigger_name
 
 message_dir = pathlib.Path(__file__).parent.parent / "messages"
 
+color_dict = dict(
+    red="#FF0000",
+    green="#00FF00",
+    blue="#0000FF",
+    yellow="#FFFF00",
+)
+
 
 def prepare_stimuli(win, config):
     incongruent_trials = []
@@ -21,20 +28,14 @@ def prepare_stimuli(win, config):
     for text in ["CZERWONY", "ZIELONY", "NIEBIESKI", "ŻÓŁTY"]:
         for color in ["red", "green", "blue", "yellow"]:
             name = f"{color}_{unidecode(text.lower())}"
-            # todo 255 colors
             stimulus = visual.TextStim(
                 win=win,
                 text=text,
-                color=color,
+                color=color_dict[color],
                 height=config["Target_size"],
                 name=name,
             )
-            congruent = name in [
-                "red_czerwony",
-                "green_zielony",
-                "blue_niebieski",
-                "yellow_zolty",
-            ]  # fmt: off
+            congruent = name in ["red_czerwony", "green_zielony", "blue_niebieski", "yellow_zolty" ]  # fmt: skip
             trial = dict(
                 target=stimulus,
                 target_name=name,
@@ -51,10 +52,35 @@ def prepare_stimuli(win, config):
     return congruent_trials, incongruent_trials
 
 
+def check_response(config, trial, clock, trigger_handler, block):
+    key = event.getKeys(keyList=config["Response_key"].values())
+    reaction_time = clock.getTime()
+    if not key:
+        return
+    if trial["response"] != "-":
+        # there already was a response
+        return
+
+    trial["rt"] = reaction_time
+    trial["response"] = key[0]
+    print(reaction_time, key)
+    if trial["correct_key"] == key[0]:
+        trial["reaction"] = "correct"
+    else:
+        trial["reaction"] = "incorrect"
+
+    trigger_name = get_trigger_name(
+        trigger_type=TriggerTypes.REACTION,
+        block=block,
+        trial=trial,
+    )
+    trigger_handler.prepare_trigger(trigger_name)
+    trigger_handler.send_trigger()
+
+
 def stroop_task(exp, config, data_saver):
     # unpack necessary objects for easier access
     win = exp.win
-    mouse = exp.mouse
     clock = exp.clock
 
     congruent_trials, incongruent_trials = prepare_stimuli(win, config)
@@ -74,7 +100,7 @@ def stroop_task(exp, config, data_saver):
     exp.trigger_handler = trigger_handler
 
     for block in config["Experiment_blocks"]:
-        trigger_name = get_trigger_name(TriggerTypes.BLOCK_START, block, response="-")
+        trigger_name = get_trigger_name(TriggerTypes.BLOCK_START, block)
         trigger_handler.prepare_trigger(trigger_name)
         trigger_handler.send_trigger()
         logging.data(f"Entering block: {block}")
@@ -113,74 +139,76 @@ def stroop_task(exp, config, data_saver):
             block["trials"] = trials
 
         else:
-            raise ValueError(
-                "{} is bad block type in config Experiment_blocks".format(block["type"])
-            )
+            raise ValueError("{} is a bad block type in config".format(block["type"]))
 
         for trial in block["trials"]:
-            response_data = []
             trigger_handler.open_trial()
+            trial["response"] = "-"
+            trial["rt"] = "-"
+            trial["reaction"] = "-"
 
-            # ! draw target
-            trigger_name = get_trigger_name(TriggerTypes.TARGET, block, trial)
-            target_show_time = 0.2
-            event.clearEvents()
-            win.callOnFlip(mouse.clickReset)
-            win.callOnFlip(clock.reset)
-            trigger_handler.prepare_trigger(trigger_name)
-            trial["target"].setAutoDraw(True)
-            win.flip()
-            trigger_handler.send_trigger()
-            while clock.getTime() < target_show_time:
-                check_response(exp, block, trial, response_data)
-                win.flip()
-            trial["target"].setAutoDraw(False)
-            win.flip()
+            # ! draw empty screen
+            core.wait(1)
 
-            # ! draw empty screen and await response
+            # ! draw fixation
             trigger_name = get_trigger_name(TriggerTypes.FIXATION, block, trial)
-            empty_screen_show_time = 0.8
             trigger_handler.prepare_trigger(trigger_name)
             fixation.setAutoDraw(True)
             win.flip()
             trigger_handler.send_trigger()
-            while clock.getTime() < target_show_time + empty_screen_show_time:
-                check_response(exp, block, trial, response_data)
-                win.flip()
+            core.wait(0.5)
             fixation.setAutoDraw(False)
+
             data_saver.check_exit()
 
-            # check if reaction was correct
-            response_side, reaction_time = (
-                response_data[0] if response_data != [] else ("-", "-")
-            )
-            if response_side == trial["correct_key"]:
-                reaction = "correct"
-            else:
-                reaction = "incorrect"
+            # ! draw target
+            trigger_name = get_trigger_name(TriggerTypes.TARGET_START, block, trial)
+            trigger_handler.prepare_trigger(trigger_name)
+            event.clearEvents()
+            win.callOnFlip(clock.reset)
+            trial["target"].setAutoDraw(True)
+            win.flip()
+            trigger_handler.send_trigger()
+            while clock.getTime() < 0.2:
+                check_response(config, trial, clock, trigger_handler, block)
+                win.flip()
+            trial["target"].setAutoDraw(False)
+
+            # ! draw fixation and await response
+            trigger_name = get_trigger_name(TriggerTypes.TARGET_END, block, trial)
+            trigger_handler.prepare_trigger(trigger_name)
+            fixation.setAutoDraw(True)
+            win.flip()
+            trigger_handler.send_trigger()
+            while clock.getTime() < 0.2 + 0.8:
+                check_response(config, trial, clock, trigger_handler, block)
+                win.flip()
+            fixation.setAutoDraw(False)
+            win.flip()
 
             # if incorrect and training, show feedback
-            if reaction == "incorrect" and block["type"] == "training":
-                text = "Reakcja niepoprawna.\n\n" + config["Response_instruction"]
+            if trial["reaction"] != "correct" and block["type"] == "training":
+                text = "Reakcja niepoprawna.\nWciskaj klawisz odpowiadający KOLOROWI CZCIONKI."
                 show_info(exp, text, duration=6)
                 exp.display_for_duration(2, fixation)
 
             # save beh
             # fmt: off
             behavioral_data = OrderedDict(
+                # predefined
                 block_type=block["type"],
                 trial_type=trial["type"],
                 font_color=trial["font_color"],
                 text=trial["text"],
-                response=response_side,
                 correct_key=trial["correct_key"],
-                rt=reaction_time,
-                reaction=reaction,
-                empty_screen_show_time=empty_screen_show_time,
+                # based on response
+                response=trial["response"],
+                rt=trial["rt"],
+                reaction=trial["reaction"],
             )
             # fmt: on
             data_saver.beh.append(behavioral_data)
-            trigger_handler.close_trial(response_side)
+            trigger_handler.close_trial(trial["response"])
 
-            # logging.data(f"Behavioral data: {behavioral_data}\n")
-            # logging.flush()
+            logging.data(f"Behavioral data: {behavioral_data}\n")
+            logging.flush()

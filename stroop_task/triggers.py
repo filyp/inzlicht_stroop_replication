@@ -1,6 +1,7 @@
 class TriggerTypes:
     BLINK = "BLINK"
-    TARGET = "TARGET__"
+    TARGET_START = "TARGET_S"
+    TARGET_END = "TARGET_E"
     REACTION = "REACTION"
     SECOND_REACTION = "SECOND_R"
     FIXATION = "FIXATION"
@@ -11,14 +12,14 @@ def get_trigger_name(
     trigger_type,
     block,
     trial=None,
-    response="{}",
 ):
     block_type = block["type"]
     if trial is not None:
         target_name = trial["target_name"]
         correct_key = trial["correct_key"]
     else:
-        target_name = "---"
+        target_name = "-"
         correct_key = "-"
 
-    return f"{trigger_type}*{block_type[:2]}*{target_name}*{correct_key}*{response}"
+    # response will be added later, on close_trial
+    return f"{trigger_type}*{block_type[:2]}*{target_name}*{correct_key}*"

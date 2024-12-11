@@ -17,6 +17,13 @@ Fixation_offset: 0.001
 Target_show_time: [0.200, 0.200, 0.100]
 Blank_screen_for_response_show_time: [2.000, 2.400, 0.100]
 
+Response_key: {
+    "red": "z",
+    "green": "x",
+    "blue": "n",
+    "yellow": "m",
+}
+
 # * experiment structure
 Experiment_blocks: [
     # {type: msg, file_name: greet.txt},
