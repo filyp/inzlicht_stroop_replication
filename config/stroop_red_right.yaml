@@ -1,0 +1,89 @@
+# * EEG
+Send_EEG_trigg: True
+Actiview_reminder: True
+
+# * view parameters
+Screen_color: "black"
+Text_size: 0.04
+Text_font: "Arial"
+Text_color: "white"
+Fixation_size: 0.0435
+# # 6/360*2*3.14*50/30 / 6.4   (6.4 is the proportion of text width to height)
+Target_size: 0.0272
+# needs to be calibrated when Target_size or Fixation_size is changed
+Fixation_offset: 0.001
+
+# * times
+Target_show_time: [0.200, 0.200, 0.100]
+Blank_screen_for_response_show_time: [2.000, 2.400, 0.100]
+
+# * experiment parameters
+Response_key: {
+    "green": "l",
+    "red": "r",
+}
+Response_instruction: |
+    Jeśli KOLOR CZCIONKI jest ZIELONY:
+    naciśnij LEWY przycisk myszy
+
+    Jeśli KOLOR CZCIONKI jest CZERWONY:
+    naciśnij PRAWY przycisk myszy
+
+# * experiment structure
+Experiment_blocks: [
+    {type: break, file_name: greet.txt},
+    {type: instructions},
+    {type: training, number_of_trials: 24},
+    {type: break, file_name: training.txt},
+    {type: training, number_of_trials: 24},
+    {type: break, file_name: end_training.txt},
+    {type: break, file_name: first_block.txt, duration: 5},
+
+    {type: experiment, number_of_trials: 48},
+    {type: break, num: 1},
+    {type: experiment, number_of_trials: 48},
+    {type: break, num: 2},
+    {type: experiment, number_of_trials: 48},
+    {type: break, num: 3},
+    {type: experiment, number_of_trials: 48},
+    {type: break, num: 4},
+    {type: experiment, number_of_trials: 48},
+    {type: break, num: 5},
+    {type: experiment, number_of_trials: 48},
+    {type: break, num: 6},
+    {type: experiment, number_of_trials: 48},
+    {type: break, num: 7},
+    {type: experiment, number_of_trials: 48},
+    {type: break, num: 8},
+    {type: experiment, number_of_trials: 48},
+    {type: break, num: 9},
+    {type: experiment, number_of_trials: 48},
+    {type: break, num: 10},
+    {type: experiment, number_of_trials: 48},
+    {type: break, num: 11},
+    {type: experiment, number_of_trials: 48},
+    {type: break, num: 12},
+    {type: experiment, number_of_trials: 48},
+    {type: break, num: 13},
+    {type: experiment, number_of_trials: 48},
+    {type: break, num: 14},
+    {type: experiment, number_of_trials: 48},
+    {type: break, num: 15},
+    {type: experiment, number_of_trials: 48},
+    {type: break, num: 16},
+    {type: experiment, number_of_trials: 48},
+    {type: break, num: 17},
+    {type: experiment, number_of_trials: 48},
+    {type: break, num: 18},
+    {type: experiment, number_of_trials: 48},
+    {type: break, num: 19},
+    {type: experiment, number_of_trials: 48},
+    {type: break, num: 20},
+    {type: experiment, number_of_trials: 48},
+    {type: break, num: 21},
+    {type: experiment, number_of_trials: 48},
+    {type: break, num: 22},
+    {type: experiment, number_of_trials: 48},
+    {type: break, num: 23},
+    {type: experiment, number_of_trials: 48},
+    {type: break, file_name: end.txt, duration: 5}]
