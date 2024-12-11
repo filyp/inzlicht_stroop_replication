@@ -35,7 +35,6 @@ def show_info(
     pos=(0, 0),
     duration=None,
     custom_text=None,
-    required_click="left",
 ):
     """
     Clear way to show info message into screen.
@@ -83,11 +82,7 @@ def show_info(
                 exp.data_saver.save_triggers()
                 logging.critical("Experiment finished by user! {} pressed".format(keys))
                 exit(1)
-            if "return" in keys or "space" in keys:
-                break
-            if press_times[0] > 0 and required_click == "left":
-                break
-            if press_times[2] > 0 and required_click == "right":
+            if "space" in keys:
                 break
                 
             core.wait(0.030)

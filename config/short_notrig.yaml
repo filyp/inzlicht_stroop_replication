@@ -17,27 +17,14 @@ Fixation_offset: 0.001
 Target_show_time: [0.200, 0.200, 0.100]
 Blank_screen_for_response_show_time: [2.000, 2.400, 0.100]
 
-# * experiment parameters
-Response_key: {
-    "red": "l",
-    "green": "r",
-}
-Response_instruction: |
-    Jeśli KOLOR CZCIONKI jest CZERWONY:
-    naciśnij LEWY przycisk myszy
-
-    Jeśli KOLOR CZCIONKI jest ZIELONY:
-    naciśnij PRAWY przycisk myszy
-
 # * experiment structure
 Experiment_blocks: [
-    {type: break, file_name: greet.txt},
-    {type: instructions},
+    {type: msg, file_name: greet.txt},
     {type: training, number_of_trials: 6},
-    {type: break, file_name: training.txt},
+    {type: msg, file_name: training.txt},
     {type: training, number_of_trials: 6},
-    {type: break, file_name: end_training.txt},
-    {type: break, file_name: first_block.txt, duration: 5},
+    {type: msg, file_name: end_training.txt},
+    {type: msg, file_name: first_block.txt, duration: 5},
 
     {type: experiment, number_of_trials: 6},
     {type: break, num: 1},
@@ -52,4 +39,4 @@ Experiment_blocks: [
     {type: experiment, number_of_trials: 6},
     {type: break, num: 6},
     {type: experiment, number_of_trials: 6},
-    {type: break, file_name: end.txt, duration: 5}]
+    {type: msg, file_name: end.txt, duration: 5}]

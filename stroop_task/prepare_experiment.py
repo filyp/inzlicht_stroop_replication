@@ -5,69 +5,16 @@ from psychopy import logging, visual
 
 def prepare_stimuli(win, config):
     stimuli = dict()
-    stimuli["red_czerwony"] = visual.TextStim(
-        win=win,
-        text="CZERWONY",
-        color="red",
-        height=config["Target_size"],
-        name="red_czerwony",
-    )
-    stimuli["green_zielony"] = visual.TextStim(
-        win=win,
-        text="ZIELONY",
-        color="green",
-        height=config["Target_size"],
-        name="green_zielony",
-    )
-    stimuli["red_zielony"] = visual.TextStim(
-        win=win,
-        text="ZIELONY",
-        color="red",
-        height=config["Target_size"],
-        name="red_zielony",
-    )
-    stimuli["green_czerwony"] = visual.TextStim(
-        win=win,
-        text="CZERWONY",
-        color="green",
-        height=config["Target_size"],
-        name="green_czerwony",
-    )
-    stimuli["red_niebieski"] = visual.TextStim(
-        win=win,
-        text="NIEBIESKI",
-        color="red",
-        height=config["Target_size"],
-        name="red_niebieski",
-    )
-    stimuli["green_niebieski"] = visual.TextStim(
-        win=win,
-        text="NIEBIESKI",
-        color="green",
-        height=config["Target_size"],
-        name="green_niebieski",
-    )
-    # stimuli["blue_niebieski"] = visual.TextStim(
-    #     win=win,
-    #     text="NIEBIESKI",
-    #     color="blue",
-    #     height=config["Target_size"],
-    #     name="blue_niebieski",
-    # )
-    # stimuli["blue_czerwony"] = visual.TextStim(
-    #     win=win,
-    #     text="CZERWONY",
-    #     color="blue",
-    #     height=config["Target_size"],
-    #     name="blue_czerwony",
-    # )
-    # stimuli["blue_zielony"] = visual.TextStim(
-    #     win=win,
-    #     text="ZIELONY",
-    #     color="blue",
-    #     height=config["Target_size"],
-    #     name="blue_zielony",
-    # )
+    for text in ["CZERWONY", "ZIELONY", "NIEBIESKI", "ŻÓŁTY"]:
+        for color in ["red", "green", "blue", "yellow"]:
+            name = f"{color}_{text.lower()}"
+            stimuli[name] = visual.TextStim(
+                win=win,
+                text=text,
+                color=color,
+                height=config["Target_size"],
+                name=name,
+            )
     return stimuli
 
 
