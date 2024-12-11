@@ -2,6 +2,6 @@ numpy
 pandas
 screeninfo
 pyyaml
-playsound
+unidecode
 
 psychopy

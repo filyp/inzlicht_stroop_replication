@@ -6,13 +6,49 @@ from textwrap import dedent
 
 import numpy as np
 from psychopy import core, event, logging, visual
+from unidecode import unidecode
 
 from psychopy_experiment_helpers.show_info import show_info
 from psychopy_experiment_helpers.triggers_common import TriggerHandler, create_eeg_port
-from stroop_task.prepare_experiment import prepare_stimuli, prepare_trials
 from stroop_task.triggers import TriggerTypes, get_trigger_name
 
 message_dir = pathlib.Path(__file__).parent.parent / "messages"
+
+
+def prepare_stimuli(win, config):
+    incongruent_trials = []
+    congruent_trials = []
+    for text in ["CZERWONY", "ZIELONY", "NIEBIESKI", "ŻÓŁTY"]:
+        for color in ["red", "green", "blue", "yellow"]:
+            name = f"{color}_{unidecode(text.lower())}"
+            # todo 255 colors
+            stimulus = visual.TextStim(
+                win=win,
+                text=text,
+                color=color,
+                height=config["Target_size"],
+                name=name,
+            )
+            congruent = name in [
+                "red_czerwony",
+                "green_zielony",
+                "blue_niebieski",
+                "yellow_zolty",
+            ]  # fmt: off
+            trial = dict(
+                target=stimulus,
+                target_name=name,
+                type="congruent" if congruent else "incongruent",
+                font_color=color,
+                text=text,
+                correct_key=config["Response_key"][color],
+            )
+            if congruent:
+                congruent_trials.append(trial)
+            else:
+                incongruent_trials.append(trial)
+
+    return congruent_trials, incongruent_trials
 
 
 def stroop_task(exp, config, data_saver):
@@ -21,7 +57,7 @@ def stroop_task(exp, config, data_saver):
     mouse = exp.mouse
     clock = exp.clock
 
-    stimuli = prepare_stimuli(win, config)
+    congruent_trials, incongruent_trials = prepare_stimuli(win, config)
     # create a fixation cross as a text stim
     fixation = visual.TextStim(
         win=win,
@@ -46,7 +82,7 @@ def stroop_task(exp, config, data_saver):
 
         if block["type"] == "break":
             text = "Zakończyłeś jeden z bloków sesji eksperymentalnej."
-            show_info(None, exp, duration=3, custom_text=text)
+            show_info(exp, text, duration=3)
 
             text = """\
             Zrób sobie PRZERWĘ.
@@ -55,10 +91,10 @@ def stroop_task(exp, config, data_saver):
 
             (wciśnij spację kiedy będziesz gotowy kontynuować badanie)"""
             text = dedent(text).format(num=block["num"])
-            show_info(None, exp, duration=None, custom_text=text)
+            show_info(exp, text, duration=None)
 
             text = """Za chwilę rozpocznie się kolejny blok sesji eksperymentalnej."""
-            show_info(None, exp, duration=5, custom_text=text)
+            show_info(exp, text, duration=5)
             continue
 
         elif block["type"] == "msg":
@@ -66,28 +102,28 @@ def stroop_task(exp, config, data_saver):
             text = (message_dir / block["file_name"]).read_text()
             text = text.format(**config)
             duration = block.get("duration", None)
-            show_info(None, exp, duration=duration, custom_text=text)
+            show_info(exp, text, duration=duration)
             continue
 
         elif block["type"] in ["experiment", "training"]:
-            block["trials"] = prepare_trials(block, stimuli, config)
+            # prepare 24 congruent trials and 12 incongruent trials
+            # trials = congruent_trials * 6 + incongruent_trials
+            trials = incongruent_trials
+            random.shuffle(trials)
+            block["trials"] = trials
+
         else:
             raise ValueError(
                 "{} is bad block type in config Experiment_blocks".format(block["type"])
             )
 
-        # # ! draw empty screen
-        # trigger_name = get_trigger_name(TriggerTypes.FIXATION, block, response="-")
-        # empty_screen_show_time = 0
-        # exp.display_for_duration(empty_screen_show_time, fixation, trigger_name)
-
         for trial in block["trials"]:
             response_data = []
             trigger_handler.open_trial()
 
-            # # ! draw target
+            # ! draw target
             trigger_name = get_trigger_name(TriggerTypes.TARGET, block, trial)
-            target_show_time = random_time(*config["Target_show_time"])
+            target_show_time = 0.2
             event.clearEvents()
             win.callOnFlip(mouse.clickReset)
             win.callOnFlip(clock.reset)
@@ -103,9 +139,7 @@ def stroop_task(exp, config, data_saver):
 
             # ! draw empty screen and await response
             trigger_name = get_trigger_name(TriggerTypes.FIXATION, block, trial)
-            empty_screen_show_time = random_time(
-                *config["Blank_screen_for_response_show_time"]
-            )
+            empty_screen_show_time = 0.8
             trigger_handler.prepare_trigger(trigger_name)
             fixation.setAutoDraw(True)
             win.flip()
@@ -120,7 +154,7 @@ def stroop_task(exp, config, data_saver):
             response_side, reaction_time = (
                 response_data[0] if response_data != [] else ("-", "-")
             )
-            if response_side == trial["correct_side"]:
+            if response_side == trial["correct_key"]:
                 reaction = "correct"
             else:
                 reaction = "incorrect"
@@ -128,7 +162,7 @@ def stroop_task(exp, config, data_saver):
             # if incorrect and training, show feedback
             if reaction == "incorrect" and block["type"] == "training":
                 text = "Reakcja niepoprawna.\n\n" + config["Response_instruction"]
-                show_info(None, exp, duration=6, custom_text=text)
+                show_info(exp, text, duration=6)
                 exp.display_for_duration(2, fixation)
 
             # save beh
@@ -139,7 +173,7 @@ def stroop_task(exp, config, data_saver):
                 font_color=trial["font_color"],
                 text=trial["text"],
                 response=response_side,
-                correct_side=trial["correct_side"],
+                correct_key=trial["correct_key"],
                 rt=reaction_time,
                 reaction=reaction,
                 empty_screen_show_time=empty_screen_show_time,

@@ -16,9 +16,9 @@ def get_trigger_name(
     block_type = block["type"]
     if trial is not None:
         target_name = trial["target_name"]
-        correct_side = trial["correct_side"]
+        correct_key = trial["correct_key"]
     else:
         target_name = "---"
-        correct_side = "-"
+        correct_key = "-"
 
-    return f"{trigger_type}*{block_type[:2]}*{target_name}*{correct_side}*{response}"
+    return f"{trigger_type}*{block_type[:2]}*{target_name}*{correct_key}*{response}"

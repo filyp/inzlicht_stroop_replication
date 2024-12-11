@@ -7,34 +7,12 @@ import codecs
 from psychopy import event, logging, visual, core
 
 
-def read_text_from_file(file_name, insert=""):
-    """
-    Method that read message from text file, and optionally add some
-    dynamically generated info.
-    :param file_name: Name of file to read
-    :param insert: dynamically generated info
-    :return: message
-    """
-    if not isinstance(file_name, str):
-        raise TypeError("file_name must be a string")
-    msg = list()
-    with codecs.open(file_name, encoding="utf-8", mode="r") as data_file:
-        for line in data_file:
-            if not line.startswith("#"):  # if not commented line
-                msg.append(line)
-    whole_message = "".join(msg)
-    final_message = whole_message.replace("<--insert-->", insert)
-    return final_message
-
-
 def show_info(
-    file_name,
     exp,
-    insert="",
+    custom_text,
     alignText="center",
     pos=(0, 0),
     duration=None,
-    custom_text=None,
 ):
     """
     Clear way to show info message into screen.
@@ -49,12 +27,7 @@ def show_info(
 
     screen_width = exp.screen_res["width"]
 
-    if custom_text is not None:
-        hello_msg = custom_text
-    else:
-        hello_msg = read_text_from_file(
-            os.path.join("messages", file_name), insert=insert
-        )
+    hello_msg = custom_text
     hello_msg = visual.TextStim(
         win=exp.win,
         antialias=True,
