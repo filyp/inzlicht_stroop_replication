@@ -28,7 +28,7 @@ def create_win(screen_color, screen_number):
         screen_res_list,
         fullscr=True,
         units="height",
-        screen=screen_number,
+        # screen=screen_number,
         color=screen_color,
     )
     event.Mouse(visible=False, newPos=None, win=win)
