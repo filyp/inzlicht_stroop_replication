@@ -165,6 +165,7 @@ def stroop_task(exp, config, data_saver):
             trial["reaction"] = "-"
 
             # ! draw empty screen
+            win.flip()
             core.wait(1)
 
             # ! draw fixation
@@ -208,14 +209,13 @@ def stroop_task(exp, config, data_saver):
                 win.flip()
 
             # if incorrect and training, show feedback
-            if (
-                (trial["reaction"] != "correct")
-                and ("training" in block["type"])
-                and (not untimed)
-            ):
-                text = "Reakcja niepoprawna.\nWciskaj klawisz odpowiadający KOLOROWI CZCIONKI."
-                show_info(exp, text, duration=6)
-                exp.display_for_duration(2, fixation)
+            if ("training" in block["type"]) and (not untimed):
+                if trial["reaction"] == "incorrect":
+                    text = "Reakcja niepoprawna.\nWciskaj klawisz odpowiadający KOLOROWI CZCIONKI."
+                    show_info(exp, text, duration=5)
+                elif trial["reaction"] == "-":
+                    text = "Reakcja zbyt późna."
+                    show_info(exp, text, duration=5)
 
             # save beh
             # fmt: off

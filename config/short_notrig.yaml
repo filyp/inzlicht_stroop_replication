@@ -31,10 +31,10 @@ Experiment_blocks: [
     {type: msg, file_name: 2training.txt},
     {type: 2training},
 
-    {type: msg, file_name: 3instruct.txt},
+    {type: msg, file_name: 3training.txt},
     {type: 3training},
 
-    {type: msg, file_name: 4instruct.txt},
+    {type: msg, file_name: 4training.txt},
     {type: 4training},
 
     {type: msg, file_name: pre_experiment.txt},
