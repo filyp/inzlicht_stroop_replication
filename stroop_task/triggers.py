@@ -22,4 +22,4 @@ def get_trigger_name(
         correct_key = "-"
 
     # response will be added later, on close_trial
-    return f"{trigger_type}*{block_type[:2]}*{target_name}*{correct_key}*"
+    return f"{trigger_type}*{block_type[:3]}*{target_name}*{correct_key}*"

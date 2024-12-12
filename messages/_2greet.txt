@@ -1,0 +1,11 @@
+W tym zadaniu zobaczysz nazwy kolorów - „czerwony”, „zielony”, „niebieski” i „żółty”,
+wyświetlane na ekranie w różnych kolorach czcionki.
+Musisz reagować na podstawie koloru czcionki każdego widzianego słowa.
+Należy odpowiedzieć, używając klawisza w kolorze czcionki.
+
+Jeśli kolor czcionki to CZERWONY, naciśniesz czerwony klawisz środkowym palcem lewej ręki.
+Jeśli kolor czcionki to ZIELONY, naciśniesz zielony klawisz wskazującym palcem lewej ręki.
+Jeśli kolor czcionki to NIEBIESKI, naciśniesz niebieski klawisz wskazującym palcem prawej ręki.
+Jeśli kolor czcionki to ŻÓŁTY, naciśniesz żółty klawisz środkowym palcem prawej ręki.
+
+(wciśnij spację aby kontynuować)

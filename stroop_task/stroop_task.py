@@ -105,6 +105,7 @@ def stroop_task(exp, config, data_saver):
         trigger_handler.send_trigger()
         logging.data(f"Entering block: {block}")
         logging.flush()
+        untimed = False  # that's the default
 
         if block["type"] == "break":
             text = "Zakończyłeś jeden z bloków sesji eksperymentalnej."
@@ -131,17 +132,33 @@ def stroop_task(exp, config, data_saver):
             show_info(exp, text, duration=duration)
             continue
 
-        elif block["type"] in ["experiment", "training"]:
+        elif block["type"] == "1training":
+            trials = congruent_trials
+            untimed = True
+            assert len(trials) == 4
+
+        elif block["type"] == "2training":
+            trials = congruent_trials * 2
+            assert len(trials) == 8
+
+        elif block["type"] == "3training":
+            trials = random.sample(incongruent_trials, 4)
+            untimed = True
+            assert len(trials) == 4
+
+        elif block["type"] == "4training":
+            trials = random.sample(incongruent_trials, 4) + congruent_trials * 2
+            assert len(trials) == 12
+
+        elif block["type"] == "experiment":
             # prepare 24 congruent trials and 12 incongruent trials
-            # trials = congruent_trials * 6 + incongruent_trials
-            trials = incongruent_trials
-            random.shuffle(trials)
-            block["trials"] = trials
+            trials = congruent_trials * 6 + incongruent_trials
 
         else:
             raise ValueError("{} is a bad block type in config".format(block["type"]))
 
-        for trial in block["trials"]:
+        random.shuffle(trials)
+        for trial in trials:
             trigger_handler.open_trial()
             trial["response"] = "-"
             trial["rt"] = "-"
@@ -169,25 +186,33 @@ def stroop_task(exp, config, data_saver):
             trial["target"].setAutoDraw(True)
             win.flip()
             trigger_handler.send_trigger()
-            while clock.getTime() < 0.2:
-                check_response(config, trial, clock, trigger_handler, block)
-                win.flip()
+            if untimed:
+                event.waitKeys(keyList=[trial["correct_key"]])
+            else:
+                while clock.getTime() < 0.2:
+                    check_response(config, trial, clock, trigger_handler, block)
+                    win.flip()
             trial["target"].setAutoDraw(False)
 
-            # ! draw fixation and await response
-            trigger_name = get_trigger_name(TriggerTypes.TARGET_END, block, trial)
-            trigger_handler.prepare_trigger(trigger_name)
-            fixation.setAutoDraw(True)
-            win.flip()
-            trigger_handler.send_trigger()
-            while clock.getTime() < 0.2 + 0.8:
-                check_response(config, trial, clock, trigger_handler, block)
+            if not untimed:
+                # ! draw fixation and await response
+                trigger_name = get_trigger_name(TriggerTypes.TARGET_END, block, trial)
+                trigger_handler.prepare_trigger(trigger_name)
+                fixation.setAutoDraw(True)
                 win.flip()
-            fixation.setAutoDraw(False)
-            win.flip()
+                trigger_handler.send_trigger()
+                while clock.getTime() < 0.2 + 0.8:
+                    check_response(config, trial, clock, trigger_handler, block)
+                    win.flip()
+                fixation.setAutoDraw(False)
+                win.flip()
 
             # if incorrect and training, show feedback
-            if trial["reaction"] != "correct" and block["type"] == "training":
+            if (
+                (trial["reaction"] != "correct")
+                and ("training" in block["type"])
+                and (not untimed)
+            ):
                 text = "Reakcja niepoprawna.\nWciskaj klawisz odpowiadający KOLOROWI CZCIONKI."
                 show_info(exp, text, duration=6)
                 exp.display_for_duration(2, fixation)

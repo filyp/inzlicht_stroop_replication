@@ -13,10 +13,6 @@ Target_size: 0.0272
 # needs to be calibrated when Target_size or Fixation_size is changed
 Fixation_offset: 0.001
 
-# * times
-Target_show_time: [0.200, 0.200, 0.100]
-Blank_screen_for_response_show_time: [2.000, 2.400, 0.100]
-
 Response_key: {
     "red": "z",
     "green": "x",
@@ -26,13 +22,22 @@ Response_key: {
 
 # * experiment structure
 Experiment_blocks: [
-    # {type: msg, file_name: greet.txt},
-    # {type: training, number_of_trials: 6},
-    # {type: msg, file_name: training.txt},
-    # {type: training, number_of_trials: 6},
-    # {type: msg, file_name: end_training.txt},
-    # {type: msg, file_name: first_block.txt, duration: 5},
+    {type: msg, file_name: _1greet.txt},
+    {type: msg, file_name: _2greet.txt},
 
+    {type: msg, file_name: 1training.txt},
+    {type: 1training},
+
+    {type: msg, file_name: 2training.txt},
+    {type: 2training},
+
+    {type: msg, file_name: 3instruct.txt},
+    {type: 3training},
+
+    {type: msg, file_name: 4instruct.txt},
+    {type: 4training},
+
+    {type: msg, file_name: pre_experiment.txt},
     {type: experiment},
     {type: break, num: 1},
     {type: experiment},
