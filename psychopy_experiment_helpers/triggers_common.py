@@ -24,7 +24,6 @@ class TriggerHandler:
     def prepare_trigger(self, trigger_name):
         # logging.data(f"Preparing trigger: {trigger_name}")
         # logging.flush()
-
         self.trigger_no += 1
         if self.trigger_no == 9:
             self.trigger_no = 1
