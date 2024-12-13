@@ -5,3 +5,9 @@
 3. Run `pip install -r requirements.txt`
 
 You may need to adapt the mechanism of sending triggers to your setup. Edit the file `psychopy_experiment_helpers/triggers_common.py` to do so.
+
+# Running
+
+```bash
+python main.py config/full.yaml
+```
