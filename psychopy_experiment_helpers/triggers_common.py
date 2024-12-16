@@ -22,12 +22,12 @@ class TriggerHandler:
         self.trial = None
 
     def prepare_trigger(self, trigger_name):
-        # logging.data(f"Preparing trigger: {trigger_name}")
+        # logging.data("Preparing trigger: {}".format(trigger_name))
         # logging.flush()
         self.trigger_no += 1
         if self.trigger_no == 9:
             self.trigger_no = 1
-        line = f"{self.trigger_no}:{trigger_name}"
+        line = str(self.trigger_no) + ":" + trigger_name
         if self.trial is not None:
             self.trial.append(line)
         else:

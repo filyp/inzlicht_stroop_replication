@@ -104,7 +104,7 @@ data_saver = DataSaver(participant_info, experiment_name, beh=[], triggers_list=
 # copy config file to results folder
 os.makedirs(data_saver.directory, exist_ok=True)
 shutil.copy2(config_path, data_saver.directory)
-logging.data(f"Experiment name: {experiment_name}")
+logging.data("Experiment name: {}".format(experiment_name))
 
 # create experiment object
 exp = Experiment(config, data_saver)

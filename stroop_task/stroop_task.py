@@ -27,7 +27,7 @@ def prepare_stimuli(win, config):
     congruent_trials = []
     for text in ["CZERWONY", "ZIELONY", "NIEBIESKI", "ŻÓŁTY"]:
         for color in ["red", "green", "blue", "yellow"]:
-            name = f"{color}_{unidecode(text.lower())}"
+            name = color + "_" + unidecode(text.lower())
             stimulus = visual.TextStim(
                 win=win,
                 text=text,
@@ -103,7 +103,7 @@ def stroop_task(exp, config, data_saver):
         trigger_name = get_trigger_name(TriggerTypes.BLOCK_START, block)
         trigger_handler.prepare_trigger(trigger_name)
         trigger_handler.send_trigger()
-        logging.data(f"Entering block: {block}")
+        logging.data("Entering block: {}".format(block))
         logging.flush()
         untimed = False  # that's the default
 
@@ -235,5 +235,5 @@ def stroop_task(exp, config, data_saver):
             data_saver.beh.append(behavioral_data)
             trigger_handler.close_trial(trial["response"])
 
-            logging.data(f"Behavioral data: {behavioral_data}\n")
+            logging.data("Behavioral data: {}\n".format(behavioral_data))
             logging.flush()

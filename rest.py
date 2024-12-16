@@ -47,7 +47,7 @@ if version == "open":
 elif version == "closed":
     blocks = blocks2
 else:
-    raise ValueError(f"Unknown version: {version} (should be 'open' or 'closed')")
+    raise ValueError("Unknown version: {} (should be 'open' or 'closed')".format(version))
 
 for i in range(len(blocks) - 1):
     b1 = blocks[i]
@@ -116,7 +116,7 @@ for i, block in enumerate(blocks):
     elif block.split("_")[-1] == "closed":
         trigger_no = 1
     else:
-        raise ValueError(f"Unknown block type: {block}")
+        raise ValueError("Unknown block type: " + str(block))
 
     # send trigger
     port_eeg.setData(trigger_no)
@@ -124,7 +124,7 @@ for i, block in enumerate(blocks):
     port_eeg.setData(0x00)
     time.sleep(0.005)
 
-    sound_file = os.path.join("messages", f"{block}.wav")
+    sound_file = os.path.join("messages", block + ".wav")
     playsound.playsound(sound_file, block=True)
 
     block_end = start_time + block_time * (i + 1)
@@ -153,7 +153,7 @@ msg = visual.TextStim(
 msg.draw()
 win.flip()
 
-sound_file = os.path.join("messages", f"end.wav")
+sound_file = os.path.join("messages", "end.wav")
 playsound.playsound(sound_file, block=True)
 
 # wait for key press or mouse click
