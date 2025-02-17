@@ -16,72 +16,72 @@ import pandas as pd
 #     our_trig_names = row[4:].dropna().tolist()
 #     s_name_to_our_trig_names[s_name] = our_trig_names
 
-# %%
-# tests for xlsx file
-xlsx_file = "Triggers/Stroop_Task_Marker_Recoding MS.xlsx"
-xlsx_data = pd.read_excel(xlsx_file)
-s_name_to_our_trig_names = {}
-for i, row in xlsx_data.iterrows():
-    if not str(row.iloc[0]).startswith("S "):
-        continue
+# # %%
+# # tests for xlsx file
+# xlsx_file = "Triggers/Stroop_Task_Marker_Recoding MS.xlsx"
+# xlsx_data = pd.read_excel(xlsx_file)
+# s_name_to_our_trig_names = {}
+# for i, row in xlsx_data.iterrows():
+#     if not str(row.iloc[0]).startswith("S "):
+#         continue
 
-    if i < 24:
-        s_name = row.iloc[0]
-        response = row.iloc[1]
-        trial_type = row.iloc[2]
-        response_type = row.iloc[3]
+#     if i < 24:
+#         s_name = row.iloc[0]
+#         response = row.iloc[1]
+#         trial_type = row.iloc[2]
+#         response_type = row.iloc[3]
 
-        our_trig_names = row[4:].dropna().tolist()
-        for our_trig_name in our_trig_names:
-            fields = our_trig_name.split("*")
-            assert len(fields) == 5
-            assert fields[0] == "REACTION", fields
-            assert fields[1] == "exp"
-            if trial_type == "Congruent":
-                assert fields[2] in ["red_czerwony", "green_zielony", "blue_niebieski", "yellow_zolty"]
-            elif trial_type == "Incongruent":
-                assert fields[2] not in ["red_czerwony", "green_zielony", "blue_niebieski", "yellow_zolty"]
-            else:
-                raise ValueError(f"Unknown trial type: {trial_type}")
+#         our_trig_names = row[4:].dropna().tolist()
+#         for our_trig_name in our_trig_names:
+#             fields = our_trig_name.split("*")
+#             assert len(fields) == 5
+#             assert fields[0] == "REACTION", fields
+#             assert fields[1] == "exp"
+#             if trial_type == "Congruent":
+#                 assert fields[2] in ["red_czerwony", "green_zielony", "blue_niebieski", "yellow_zolty"]
+#             elif trial_type == "Incongruent":
+#                 assert fields[2] not in ["red_czerwony", "green_zielony", "blue_niebieski", "yellow_zolty"]
+#             else:
+#                 raise ValueError(f"Unknown trial type: {trial_type}")
             
-            if response_type == "Correct":
-                assert fields[3] == fields[4]
-            elif response_type == "Incorrect":
-                assert fields[3] != fields[4]
-            else:
-                raise ValueError(f"Unknown response type: {response_type}")
+#             if response_type == "Correct":
+#                 assert fields[3] == fields[4]
+#             elif response_type == "Incorrect":
+#                 assert fields[3] != fields[4]
+#             else:
+#                 raise ValueError(f"Unknown response type: {response_type}")
 
-    else:
-        s_name = row.iloc[0]
-        stimuli_type = row.iloc[1]
-        font_color = row.iloc[2]
-        word_displayed = row.iloc[3]
+#     else:
+#         s_name = row.iloc[0]
+#         stimuli_type = row.iloc[1]
+#         font_color = row.iloc[2]
+#         word_displayed = row.iloc[3]
 
-        our_trig_names = row[4:].dropna().tolist()
-        for our_trig_name in our_trig_names:
-            fields = our_trig_name.split("*")
-            assert len(fields) == 5
-            assert fields[0] == "TARGET_S", fields
-            assert fields[1] == "exp", fields
-            if stimuli_type == "Congruent":
-                assert fields[2] in ["red_czerwony", "green_zielony", "blue_niebieski", "yellow_zolty"]
-            elif stimuli_type == "Incongruent":
-                assert fields[2] not in ["red_czerwony", "green_zielony", "blue_niebieski", "yellow_zolty"], row
-            else:
-                raise ValueError(f"Unknown stimuli type: {stimuli_type}")
-            color, word = fields[2].split("_")
+#         our_trig_names = row[4:].dropna().tolist()
+#         for our_trig_name in our_trig_names:
+#             fields = our_trig_name.split("*")
+#             assert len(fields) == 5
+#             assert fields[0] == "TARGET_S", fields
+#             assert fields[1] == "exp", fields
+#             if stimuli_type == "Congruent":
+#                 assert fields[2] in ["red_czerwony", "green_zielony", "blue_niebieski", "yellow_zolty"]
+#             elif stimuli_type == "Incongruent":
+#                 assert fields[2] not in ["red_czerwony", "green_zielony", "blue_niebieski", "yellow_zolty"], row
+#             else:
+#                 raise ValueError(f"Unknown stimuli type: {stimuli_type}")
+#             color, word = fields[2].split("_")
             
-            assert color == font_color.lower()
-            if word_displayed == "Red":
-                assert word == "czerwony"
-            elif word_displayed == "Green":
-                assert word == "zielony"
-            elif word_displayed == "Blue":
-                assert word == "niebieski"
-            elif word_displayed == "Yellow":
-                assert word == "zolty"
-            else:
-                raise ValueError(f"Unknown word displayed: {word_displayed}")
+#             assert color == font_color.lower()
+#             if word_displayed == "Red":
+#                 assert word == "czerwony"
+#             elif word_displayed == "Green":
+#                 assert word == "zielony"
+#             elif word_displayed == "Blue":
+#                 assert word == "niebieski"
+#             elif word_displayed == "Yellow":
+#                 assert word == "zolty"
+#             else:
+#                 raise ValueError(f"Unknown word displayed: {word_displayed}")
         
 
 # %%

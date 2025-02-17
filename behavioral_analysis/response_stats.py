@@ -1,9 +1,10 @@
 # %%
 import csv
-import os
 import glob
+import os
 import sys
 
+import matplotlib.pyplot as plt
 import numpy as np
 
 print(
@@ -11,8 +12,9 @@ print(
 )
 print("Statistics based on all the trials apart from training trials.")
 
-path = sys.argv[1]
+# path = sys.argv[1]
 # path = "../results/stroop_red_right_full_procedure_test"
+path = "../results/short_notrig_29f8e7"
 
 behavioral_data_glob = os.path.join(path, "behavioral_data", "*.csv")
 files = glob.glob(behavioral_data_glob)
@@ -35,19 +37,16 @@ with open(most_recent_file, "r") as file:
 #         blocks.append((current_row.get("block_type"), []))
 #     # append row to the latest block
 #     blocks[-1][1].append(current_row)
+# experiment_block = blocks[-1][1]
 
-
-# experiment_block = blocks[-1][1]  # TODO make it general
 experiment_rows = [row for row in rows if row["block_type"] == "experiment"]
 
 # %%
 
 congruent_correct_rts = []
 incongruent_correct_rts = []
-neutral_correct_rts = []
 congruent_error_rts = []
 incongruent_error_rts = []
-neutral_error_rts = []
 
 num_no_reaction = 0
 for row in experiment_rows:
@@ -70,13 +69,6 @@ for row in experiment_rows:
             incongruent_correct_rts.append(rt)
         elif row["reaction"] == "incorrect":
             incongruent_error_rts.append(rt)
-        else:
-            raise Exception()
-    elif row["trial_type"] == "neutral":
-        if row["reaction"] == "correct":
-            neutral_correct_rts.append(rt)
-        elif row["reaction"] == "incorrect":
-            neutral_error_rts.append(rt)
         else:
             raise Exception()
     else:
@@ -105,16 +97,14 @@ REACTION TIMES:
              |     CORRECT     |      ERROR      |       ALL       |
 CONGRUENT    |  {stats(congruent_correct_rts)}  |  {stats(congruent_error_rts)}  |  {stats(congruent_correct_rts + congruent_error_rts)}  |
 INCONGRUENT  |  {stats(incongruent_correct_rts)}  |  {stats(incongruent_error_rts)}  |  {stats(incongruent_correct_rts + incongruent_error_rts)}  |
-NEUTRAL      |  {stats(neutral_correct_rts)}  |  {stats(neutral_error_rts)}  |  {stats(neutral_correct_rts + neutral_error_rts)}  |
-ALL          |  {stats(congruent_correct_rts + incongruent_correct_rts + neutral_correct_rts)}  |  {stats(congruent_error_rts + incongruent_error_rts + neutral_error_rts)}  |  {stats(congruent_correct_rts + congruent_error_rts + incongruent_correct_rts + incongruent_error_rts + neutral_correct_rts + neutral_error_rts)}  |
+ALL          |  {stats(congruent_correct_rts + incongruent_correct_rts)}  |  {stats(congruent_error_rts + incongruent_error_rts)}  |  {stats(congruent_correct_rts + congruent_error_rts + incongruent_correct_rts + incongruent_error_rts)}  |
 
 
 NUMBER OF TRIALS:
              |     CORRECT     |      ERROR      |       ALL       |
 CONGRUENT    |  {print_len(congruent_correct_rts)}  |  {print_len(congruent_error_rts)}  |  {print_len(congruent_correct_rts + congruent_error_rts)}  |
 INCONGRUENT  |  {print_len(incongruent_correct_rts)}  |  {print_len(incongruent_error_rts)}  |  {print_len(incongruent_correct_rts + incongruent_error_rts)}  |
-NEUTRAL      |  {print_len(neutral_correct_rts)}  |  {print_len(neutral_error_rts)}  |  {print_len(neutral_correct_rts + neutral_error_rts)}  |
-ALL          |  {print_len(congruent_correct_rts + incongruent_correct_rts + neutral_correct_rts)}  |  {print_len(congruent_error_rts + incongruent_error_rts + neutral_error_rts)}  |  {print_len(congruent_correct_rts + congruent_error_rts + incongruent_correct_rts + incongruent_error_rts + neutral_correct_rts + neutral_error_rts)}  |
+ALL          |  {print_len(congruent_correct_rts + incongruent_correct_rts)}  |  {print_len(congruent_error_rts + incongruent_error_rts)}  |  {print_len(congruent_correct_rts + congruent_error_rts + incongruent_correct_rts + incongruent_error_rts)}  |
 """
 )
 
@@ -127,3 +117,11 @@ print(f"Number of trials with no reaction: {num_no_reaction}")
 
 # for trial in experiment_rows:
 # %%
+
+rts = [float(row["rt"]) for row in experiment_rows if row["rt"] != "-"]
+# %%
+plt.hist(rts, bins=20)
+plt.title("Reaction times histogram")
+
+# %%
+plt.plot(rts)
