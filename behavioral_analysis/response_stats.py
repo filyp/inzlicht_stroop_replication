@@ -14,7 +14,7 @@ print("Statistics based on all the trials apart from training trials.")
 
 # path = sys.argv[1]
 # path = "../results/stroop_red_right_full_procedure_test"
-path = "../results/short_notrig_29f8e7"
+path = "results/short_notrig_29f8e7"
 
 behavioral_data_glob = os.path.join(path, "behavioral_data", "*.csv")
 files = glob.glob(behavioral_data_glob)
@@ -120,8 +120,13 @@ print(f"Number of trials with no reaction: {num_no_reaction}")
 
 rts = [float(row["rt"]) for row in experiment_rows if row["rt"] != "-"]
 # %%
-plt.hist(rts, bins=20)
-plt.title("Reaction times histogram")
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 8))
 
-# %%
-plt.plot(rts)
+ax1.hist(rts, bins=20)
+ax1.set_title("Reaction times histogram")
+
+ax2.plot(rts)
+ax2.set_title("Reaction times sequence")
+
+plt.tight_layout()
+plt.show()
