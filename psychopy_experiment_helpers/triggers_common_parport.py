@@ -14,6 +14,13 @@ def create_eeg_port():
         raise Exception("Can't connect to EEG")
 
 
+def simple_send_trigger(port_eeg, trigger_no):
+    port_eeg.setData(trigger_no)
+    time.sleep(0.005)
+    port_eeg.setData(0x00)
+    time.sleep(0.005)
+
+
 class TriggerHandler:
     def __init__(self, port_eeg, data_saver):
         self.port_eeg = port_eeg
@@ -39,10 +46,7 @@ class TriggerHandler:
         #     logging.flush()
         if self.port_eeg is not None:
             try:
-                self.port_eeg.setData(self.trigger_no)
-                time.sleep(0.005)
-                self.port_eeg.setData(0x00)
-                time.sleep(0.005)
+                simple_send_trigger(self.port_eeg, self.trigger_no)
             except Exception as ex:
                 logging.error(ex)
 
