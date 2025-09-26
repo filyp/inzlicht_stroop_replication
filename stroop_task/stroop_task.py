@@ -9,7 +9,6 @@ from psychopy import core, event, logging, visual
 from unidecode import unidecode
 
 from psychopy_experiment_helpers.show_info import show_info
-from psychopy_experiment_helpers.triggers_common import TriggerHandler, create_eeg_port
 from stroop_task.triggers import TriggerTypes, get_trigger_name
 
 message_dir = pathlib.Path(__file__).parent.parent / "messages"
@@ -95,6 +94,12 @@ def stroop_task(exp, config, data_saver):
     )
 
     # EEG triggers
+    if config["Trigger_type"] == "usb":
+        from psychopy_experiment_helpers.triggers_common_usb import TriggerHandler, create_eeg_port
+    elif config["Trigger_type"] == "parport":
+        from psychopy_experiment_helpers.triggers_common_parport import TriggerHandler, create_eeg_port
+    else:
+        raise ValueError("Invalid trigger type: {}".format(config["Trigger_type"]))
     port_eeg = create_eeg_port() if config["Send_EEG_trigg"] else None
     trigger_handler = TriggerHandler(port_eeg, data_saver=data_saver)
     exp.trigger_handler = trigger_handler

@@ -1,5 +1,6 @@
 # * EEG
 Send_EEG_trigg: False
+Trigger_type: "usb"  # "usb" or "parport"
 Actiview_reminder: True
 
 # * view parameters
