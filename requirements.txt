@@ -3,5 +3,6 @@ pandas
 screeninfo
 pyyaml
 unidecode
+playsound
 
 psychopy
