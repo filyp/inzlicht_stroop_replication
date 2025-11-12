@@ -1,7 +1,14 @@
+# USAGE:
+# run:
+# python mapping_triggers.py TRIGGERS_FOLDER OUTPUT_FOLDER
+# the .Markers files should be in TRIGGERS_FOLDER, in the same directory as this script
+# the OUTPUT_FOLDER will be created, containing the modified .Markers files
+
 # %%
 import csv
 from copy import deepcopy
 from pathlib import Path
+import sys
 
 import pandas as pd
 
@@ -166,9 +173,11 @@ def line_replace_trig(line, new_trig):
     new_line = ", ".join(new_line)
     return new_line
     
+in_folder = Path(sys.argv[1])
+out_folder = Path(sys.argv[2])
+out_folder.mkdir(parents=True, exist_ok=False)
 
-dir_ = Path("Triggers")
-for in_path in dir_.glob("*.Markers"):
+for in_path in in_folder.glob("*.Markers"):
     text = in_path.read_text()
     if "Stimulus, S " in text:
         print(f"Skipping {in_path} - already processed")
@@ -218,8 +227,11 @@ for in_path in dir_.glob("*.Markers"):
         # print(our_trig_name)
         s_name = our_trig_names_to_s_name[our_trig_name]
         new_lines.append(line_replace_trig(line, s_name))
+    
+    out_path = out_folder / in_path.name
+    out_path.write_text("\n".join(new_lines))
 
-    in_path.write_text("\n".join(new_lines))
+    # in_path.write_text("\n".join(new_lines))
     # out_path = in_path.with_suffix(".Stimulus.Markers")
     # out_path.write_text("\n".join(new_lines))
 # %%

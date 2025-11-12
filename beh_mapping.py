@@ -1,3 +1,9 @@
+# USAGE:
+# run:
+# python beh_mapping.py BEH_FOLDER OUTPUT_FOLDER
+# the .csv files should be in BEH_FOLDER, in the same directory as this script
+# the OUTPUT_FOLDER will be created, containing the modified .csv files
+
 # %%
 import csv
 import glob
@@ -39,13 +45,17 @@ resp_rows
 # most_recent_file = files[-1]
 # print(f"Using file {most_recent_file}")
 
-beh_path = Path("results/short_notrig_29f8e7/behavioral_data")
-out_path = beh_path.parent / "behavioral_data_with_triggers"
-# delete and recreate (is a directory)
-shutil.rmtree(out_path, ignore_errors=True)
-out_path.mkdir(parents=True)
+in_folder = Path(sys.argv[1])
+out_folder = Path(sys.argv[2])
+out_folder.mkdir(parents=True, exist_ok=False)
 
-for file in beh_path.glob("*.csv"):
+# beh_path = Path("results/short_notrig_29f8e7/behavioral_data")
+# out_path = beh_path.parent / "behavioral_data_with_triggers"
+# # delete and recreate (is a directory)
+# shutil.rmtree(out_path, ignore_errors=True)
+# out_path.mkdir(parents=True)
+
+for file in in_folder.glob("*.csv"):
     with open(file, "r") as f:
         reader = csv.DictReader(f)
         rows = [row for row in reader]
@@ -67,7 +77,7 @@ for file in beh_path.glob("*.csv"):
         trig_name = candidates.iloc[0, 0]
         row["trigger"] = trig_name
 
-    out_file = out_path / Path(file).name
+    out_file = out_folder / Path(file).name
     with open(out_file, "w") as f:
         writer = csv.DictWriter(f, fieldnames=experiment_rows[0].keys())
         writer.writeheader()
